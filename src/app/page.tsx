@@ -277,7 +277,7 @@ export default function Home() {
 
   return (
     <main className="h-screen w-screen overflow-hidden relative bg-[#0d0d0d]">
-      {/* Background video - full screen */}
+      {/* Background video (desktop) / image (mobile) */}
       <div
         className="absolute inset-0 transition-all duration-1000"
         style={{
@@ -285,10 +285,17 @@ export default function Home() {
           transform: `scale(${1 + currentSection * 0.05})`,
         }}
       >
+        {/* Static image for mobile */}
+        <img
+          src="/images/hero.jpg"
+          alt=""
+          className="md:hidden absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Video for desktop */}
         <video
           ref={videoRef}
           src="/videos/rocket.mp4"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="hidden md:block absolute inset-0 w-full h-full object-cover"
           muted
           playsInline
           preload="auto"
@@ -404,17 +411,17 @@ export default function Home() {
         </div>
 
         {/* Main content area */}
-        <div className="absolute top-32 left-8 right-96 bottom-40 overflow-hidden">
+        <div className="absolute top-28 md:top-32 left-4 md:left-8 right-4 md:right-96 bottom-48 md:bottom-40 overflow-y-auto md:overflow-hidden">
           {/* Headline with animation */}
           <div className={`transition-all duration-500 ${isAnimating ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium leading-[1.05] tracking-tight text-white max-w-2xl">
+            <h1 className="text-2xl md:text-5xl lg:text-6xl font-medium leading-[1.1] tracking-tight text-white max-w-2xl">
               {current.headline[lang]}
             </h1>
           </div>
 
           {/* Content blocks - staggered animation */}
           {current.id !== 'casos' ? (
-            <div className={`mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl transition-all duration-500 delay-100 ${
+            <div className={`mt-6 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl transition-all duration-500 delay-100 ${
               isAnimating ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'
             }`}>
               {current.content[lang].map((block, i) => (
@@ -423,13 +430,13 @@ export default function Home() {
                   className="group"
                   style={{ transitionDelay: `${150 + i * 100}ms` }}
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-1.5 h-1.5 bg-[#e63226] rounded-full" />
-                    <h3 className="text-white text-sm font-medium uppercase tracking-wider">
+                  <div className="flex items-center gap-2 mb-2 md:mb-3">
+                    <div className="w-1.5 h-1.5 bg-[#e63226] rounded-full flex-shrink-0" />
+                    <h3 className="text-white text-xs md:text-sm font-medium uppercase tracking-wider">
                       {block.title}
                     </h3>
                   </div>
-                  <p className="text-[#888] text-sm leading-relaxed">
+                  <p className="text-[#888] text-xs md:text-sm leading-relaxed">
                     {block.description}
                   </p>
                 </div>
@@ -437,7 +444,7 @@ export default function Home() {
             </div>
           ) : (
             /* Cases section - special layout */
-            <div className={`mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl transition-all duration-500 delay-100 ${
+            <div className={`mt-6 md:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-3xl transition-all duration-500 delay-100 ${
               isAnimating ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'
             }`}>
               {caseStudies.map((caseStudy, i) => (
@@ -446,17 +453,17 @@ export default function Home() {
                   href={`https://${caseStudy.url}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block p-6 border border-[#222] hover:border-[#e63226] transition-all duration-300 hover:bg-[#e63226]/5"
+                  className="group block p-4 md:p-6 border border-[#222] hover:border-[#e63226] transition-all duration-300 hover:bg-[#e63226]/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-[10px] text-[#e63226] uppercase tracking-[0.2em] bg-[#e63226]/10 px-2 py-1">
                       {caseStudy.industry[lang]}
                     </span>
                   </div>
-                  <h3 className="text-white text-xl font-medium mb-2 group-hover:text-[#e63226] transition-colors">
+                  <h3 className="text-white text-lg md:text-xl font-medium mb-2 group-hover:text-[#e63226] transition-colors">
                     {caseStudy.name}
                   </h3>
-                  <p className="text-[#666] text-sm mb-4">
+                  <p className="text-[#666] text-xs md:text-sm mb-3 md:mb-4">
                     {caseStudy.description[lang]}
                   </p>
                   <div className="flex items-center gap-2 text-[#888] text-xs group-hover:text-[#e63226] transition-colors">
@@ -469,8 +476,8 @@ export default function Home() {
               ))}
 
               {/* Placeholder for future cases */}
-              <div className="p-6 border border-dashed border-[#222] flex items-center justify-center">
-                <span className="text-[#444] text-sm">
+              <div className="p-4 md:p-6 border border-dashed border-[#222] flex items-center justify-center">
+                <span className="text-[#444] text-xs md:text-sm">
                   {lang === 'es' ? 'Más casos próximamente' : 'More cases coming soon'}
                 </span>
               </div>
@@ -478,11 +485,11 @@ export default function Home() {
           )}
         </div>
 
-        {/* Scroll indicator - centered at bottom */}
+        {/* Scroll indicator - hidden on mobile, centered at bottom on desktop */}
         {currentSection < sections.length - 1 && (
           <button
             onClick={() => changeSection(currentSection + 1)}
-            className={`absolute left-1/2 -translate-x-1/2 bottom-8 flex flex-col items-center gap-2 transition-all duration-500 hover:scale-110 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}
+            className={`hidden md:flex absolute left-1/2 -translate-x-1/2 bottom-8 flex-col items-center gap-2 transition-all duration-500 hover:scale-110 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}
           >
             <span className="text-[10px] text-[#666] uppercase tracking-widest">
               {lang === 'es' ? 'Scroll' : 'Scroll'}
@@ -495,8 +502,8 @@ export default function Home() {
           </button>
         )}
 
-        {/* Section dots */}
-        <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-3">
+        {/* Section dots - hidden on mobile */}
+        <div className="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 flex-col gap-3">
           {sections.map((section, i) => (
             <button
               key={i}
@@ -516,52 +523,94 @@ export default function Home() {
         </div>
 
         {/* Bottom section */}
-        <div className="absolute bottom-6 left-8 right-8 flex items-end justify-between">
-
-          {/* Left - Tagline */}
-          <div className={`flex items-center gap-6 transition-all duration-500 ${isAnimating ? 'opacity-0 -translate-x-4' : 'opacity-100 translate-x-0'}`}>
-            <div className="text-[#e63226] text-xs uppercase tracking-wider leading-relaxed">
-              <p>{current.tagline[lang][0]}</p>
-              <p>{current.tagline[lang][1]}</p>
-            </div>
-            <span className="text-[10px] text-[#333]">|</span>
-            <p className="text-[10px] text-[#444] uppercase tracking-wider">
+        <div className="absolute bottom-0 left-0 right-0 md:bottom-6 md:left-8 md:right-8">
+          {/* Mobile: Form fixed at bottom with gradient background */}
+          <div className="md:hidden bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d]/95 to-transparent pt-8 pb-4 px-4">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={formName}
+                  onChange={(e) => setFormName(e.target.value)}
+                  placeholder={lang === 'es' ? 'NOMBRE' : 'NAME'}
+                  className="flex-1 bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
+                  required
+                />
+                <input
+                  type="email"
+                  value={formEmail}
+                  onChange={(e) => setFormEmail(e.target.value)}
+                  placeholder={lang === 'es' ? 'EMAIL' : 'EMAIL'}
+                  className="flex-1 bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={formStatus === 'sending'}
+                className="mt-2 bg-[#e63226] text-white text-xs uppercase tracking-[0.15em] py-3 px-6 hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full"
+              >
+                {formStatus === 'sending'
+                  ? (lang === 'es' ? 'Enviando...' : 'Sending...')
+                  : formStatus === 'sent'
+                  ? (lang === 'es' ? 'Enviado!' : 'Sent!')
+                  : formStatus === 'error'
+                  ? (lang === 'es' ? 'Error' : 'Error')
+                  : (lang === 'es' ? 'Contactar' : 'Contact')}
+              </button>
+            </form>
+            <p className="text-[10px] text-[#444] uppercase tracking-wider text-center mt-3">
               © {new Date().getFullYear()} Experial
             </p>
           </div>
 
-          {/* Right - Contact form */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-72">
-            <input
-              type="text"
-              value={formName}
-              onChange={(e) => setFormName(e.target.value)}
-              placeholder={lang === 'es' ? 'TU NOMBRE' : 'YOUR NAME'}
-              className="bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
-              required
-            />
-            <input
-              type="email"
-              value={formEmail}
-              onChange={(e) => setFormEmail(e.target.value)}
-              placeholder={lang === 'es' ? 'TU@EMAIL.COM' : 'YOUR@EMAIL.COM'}
-              className="bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
-              required
-            />
-            <button
-              type="submit"
-              disabled={formStatus === 'sending'}
-              className="mt-1 bg-[#e63226] text-white text-xs uppercase tracking-[0.15em] py-3 px-6 hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {formStatus === 'sending'
-                ? (lang === 'es' ? 'Enviando...' : 'Sending...')
-                : formStatus === 'sent'
-                ? (lang === 'es' ? 'Enviado!' : 'Sent!')
-                : formStatus === 'error'
-                ? (lang === 'es' ? 'Error' : 'Error')
-                : (lang === 'es' ? 'Contactar' : 'Contact')}
-            </button>
-          </form>
+          {/* Desktop: Original layout */}
+          <div className="hidden md:flex items-end justify-between">
+            {/* Left - Tagline */}
+            <div className={`flex items-center gap-6 transition-all duration-500 ${isAnimating ? 'opacity-0 -translate-x-4' : 'opacity-100 translate-x-0'}`}>
+              <div className="text-[#e63226] text-xs uppercase tracking-wider leading-relaxed">
+                <p>{current.tagline[lang][0]}</p>
+                <p>{current.tagline[lang][1]}</p>
+              </div>
+              <span className="text-[10px] text-[#333]">|</span>
+              <p className="text-[10px] text-[#444] uppercase tracking-wider">
+                © {new Date().getFullYear()} Experial
+              </p>
+            </div>
+
+            {/* Right - Contact form */}
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-72">
+              <input
+                type="text"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                placeholder={lang === 'es' ? 'TU NOMBRE' : 'YOUR NAME'}
+                className="bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
+                required
+              />
+              <input
+                type="email"
+                value={formEmail}
+                onChange={(e) => setFormEmail(e.target.value)}
+                placeholder={lang === 'es' ? 'TU@EMAIL.COM' : 'YOUR@EMAIL.COM'}
+                className="bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
+                required
+              />
+              <button
+                type="submit"
+                disabled={formStatus === 'sending'}
+                className="mt-1 bg-[#e63226] text-white text-xs uppercase tracking-[0.15em] py-3 px-6 hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {formStatus === 'sending'
+                  ? (lang === 'es' ? 'Enviando...' : 'Sending...')
+                  : formStatus === 'sent'
+                  ? (lang === 'es' ? 'Enviado!' : 'Sent!')
+                  : formStatus === 'error'
+                  ? (lang === 'es' ? 'Error' : 'Error')
+                  : (lang === 'es' ? 'Contactar' : 'Contact')}
+              </button>
+            </form>
+          </div>
         </div>
 
       </div>
