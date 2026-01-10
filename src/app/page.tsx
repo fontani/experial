@@ -278,11 +278,8 @@ export default function Home() {
         {/* Top nav */}
         <nav className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 py-6">
           {/* Left - Logo */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center">
-              <div className="w-6 h-6 border-2 border-[#e63226] rounded-full" />
-              <div className="w-6 h-6 border-2 border-[#e63226] rounded-full -ml-2" />
-            </div>
+          <div className="flex items-center gap-3">
+            <img src="/images/explogo.svg" alt="Experial" className="h-6 w-auto" />
             <span className="text-white text-sm font-bold tracking-wider">EXPERIAL</span>
           </div>
 
