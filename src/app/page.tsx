@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 
 type Language = 'es' | 'en';
 
@@ -164,6 +165,34 @@ export default function Home() {
   const [lang, setLang] = useState<Language>('es');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [formName, setFormName] = useState('');
+  const [formEmail, setFormEmail] = useState('');
+  const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formName || !formEmail) return;
+
+    setFormStatus('sending');
+    try {
+      await emailjs.send(
+        'service_v33sz4b',
+        'template_75zjmas',
+        {
+          from_name: formName,
+          from_email: formEmail,
+        },
+        'NZo4WLjECdOfLqTtT'
+      );
+      setFormStatus('sent');
+      setFormName('');
+      setFormEmail('');
+      setTimeout(() => setFormStatus('idle'), 3000);
+    } catch {
+      setFormStatus('error');
+      setTimeout(() => setFormStatus('idle'), 3000);
+    }
+  };
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Update video time based on current section
@@ -502,21 +531,37 @@ export default function Home() {
           </div>
 
           {/* Right - Contact form */}
-          <div className="flex flex-col gap-3 w-72">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-72">
             <input
               type="text"
+              value={formName}
+              onChange={(e) => setFormName(e.target.value)}
               placeholder={lang === 'es' ? 'TU NOMBRE' : 'YOUR NAME'}
               className="bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
+              required
             />
             <input
               type="email"
+              value={formEmail}
+              onChange={(e) => setFormEmail(e.target.value)}
               placeholder={lang === 'es' ? 'TU@EMAIL.COM' : 'YOUR@EMAIL.COM'}
               className="bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
+              required
             />
-            <button className="mt-1 bg-[#e63226] text-white text-xs uppercase tracking-[0.15em] py-3 px-6 hover:bg-[#c92a20] transition-colors">
-              {lang === 'es' ? 'Contactar' : 'Contact'}
+            <button
+              type="submit"
+              disabled={formStatus === 'sending'}
+              className="mt-1 bg-[#e63226] text-white text-xs uppercase tracking-[0.15em] py-3 px-6 hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {formStatus === 'sending'
+                ? (lang === 'es' ? 'Enviando...' : 'Sending...')
+                : formStatus === 'sent'
+                ? (lang === 'es' ? 'Enviado!' : 'Sent!')
+                : formStatus === 'error'
+                ? (lang === 'es' ? 'Error' : 'Error')
+                : (lang === 'es' ? 'Contactar' : 'Contact')}
             </button>
-          </div>
+          </form>
         </div>
 
       </div>
