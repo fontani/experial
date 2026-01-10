@@ -402,41 +402,41 @@ export default function Home() {
         </div>
 
         {/* Section label - top left */}
-        <div className="absolute top-24 left-8">
+        <div className="absolute top-20 md:top-24 left-4 md:left-8">
           <div className={`transition-all duration-300 ${isAnimating ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            <span className="text-[#e63226] text-xs uppercase tracking-[0.3em]">
+            <span className="text-[#e63226] text-[10px] md:text-xs uppercase tracking-[0.3em]">
               0{currentSection + 1} — {current.label[lang]}
             </span>
           </div>
         </div>
 
         {/* Main content area */}
-        <div className="absolute top-28 md:top-32 left-4 md:left-8 right-4 md:right-96 bottom-48 md:bottom-40 overflow-y-auto md:overflow-hidden">
+        <div className="absolute top-28 md:top-32 left-4 md:left-8 right-4 md:right-96 bottom-36 md:bottom-40 overflow-y-auto md:overflow-hidden scrollbar-hide">
           {/* Headline with animation */}
           <div className={`transition-all duration-500 ${isAnimating ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-            <h1 className="text-2xl md:text-5xl lg:text-6xl font-medium leading-[1.1] tracking-tight text-white max-w-2xl">
+            <h1 className="text-xl md:text-5xl lg:text-6xl font-medium leading-[1.15] tracking-tight text-white max-w-2xl">
               {current.headline[lang]}
             </h1>
           </div>
 
           {/* Content blocks - staggered animation */}
           {current.id !== 'casos' ? (
-            <div className={`mt-6 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl transition-all duration-500 delay-100 ${
+            <div className={`mt-4 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 max-w-4xl transition-all duration-500 delay-100 ${
               isAnimating ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'
             }`}>
               {current.content[lang].map((block, i) => (
                 <div
                   key={i}
-                  className="group"
+                  className="group p-3 md:p-0 bg-white/5 md:bg-transparent border border-white/10 md:border-0 rounded-lg md:rounded-none"
                   style={{ transitionDelay: `${150 + i * 100}ms` }}
                 >
-                  <div className="flex items-center gap-2 mb-2 md:mb-3">
+                  <div className="flex items-center gap-2 mb-1.5 md:mb-3">
                     <div className="w-1.5 h-1.5 bg-[#e63226] rounded-full flex-shrink-0" />
-                    <h3 className="text-white text-xs md:text-sm font-medium uppercase tracking-wider">
+                    <h3 className="text-white text-[11px] md:text-sm font-medium uppercase tracking-wider">
                       {block.title}
                     </h3>
                   </div>
-                  <p className="text-[#888] text-xs md:text-sm leading-relaxed">
+                  <p className="text-[#999] md:text-[#888] text-[11px] md:text-sm leading-relaxed">
                     {block.description}
                   </p>
                 </div>
@@ -525,41 +525,33 @@ export default function Home() {
         {/* Bottom section */}
         <div className="absolute bottom-0 left-0 right-0 md:bottom-6 md:left-8 md:right-8">
           {/* Mobile: Form fixed at bottom with gradient background */}
-          <div className="md:hidden bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d]/95 to-transparent pt-8 pb-4 px-4">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
-                  placeholder={lang === 'es' ? 'NOMBRE' : 'NAME'}
-                  className="flex-1 bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
-                  required
-                />
-                <input
-                  type="email"
-                  value={formEmail}
-                  onChange={(e) => setFormEmail(e.target.value)}
-                  placeholder={lang === 'es' ? 'EMAIL' : 'EMAIL'}
-                  className="flex-1 bg-transparent border-b border-[#333] text-white text-sm py-2 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
-                  required
-                />
-              </div>
+          <div className="md:hidden bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d] to-transparent pt-6 pb-3 px-4">
+            <form onSubmit={handleSubmit} className="flex gap-2 items-end">
+              <input
+                type="text"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                placeholder={lang === 'es' ? 'NOMBRE' : 'NAME'}
+                className="flex-1 bg-transparent border-b border-[#333] text-white text-xs py-1.5 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
+                required
+              />
+              <input
+                type="email"
+                value={formEmail}
+                onChange={(e) => setFormEmail(e.target.value)}
+                placeholder="EMAIL"
+                className="flex-1 bg-transparent border-b border-[#333] text-white text-xs py-1.5 placeholder:text-[#555] focus:outline-none focus:border-[#e63226] transition-colors"
+                required
+              />
               <button
                 type="submit"
                 disabled={formStatus === 'sending'}
-                className="mt-2 bg-[#e63226] text-white text-xs uppercase tracking-[0.15em] py-3 px-6 hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                className="bg-[#e63226] text-white text-[10px] uppercase tracking-wider py-2 px-4 hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
-                {formStatus === 'sending'
-                  ? (lang === 'es' ? 'Enviando...' : 'Sending...')
-                  : formStatus === 'sent'
-                  ? (lang === 'es' ? 'Enviado!' : 'Sent!')
-                  : formStatus === 'error'
-                  ? (lang === 'es' ? 'Error' : 'Error')
-                  : (lang === 'es' ? 'Contactar' : 'Contact')}
+                {formStatus === 'sending' ? '...' : formStatus === 'sent' ? '✓' : formStatus === 'error' ? '!' : 'OK'}
               </button>
             </form>
-            <p className="text-[10px] text-[#444] uppercase tracking-wider text-center mt-3">
+            <p className="text-[9px] text-[#444] uppercase tracking-wider text-center mt-2">
               © {new Date().getFullYear()} Experial
             </p>
           </div>
