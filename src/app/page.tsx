@@ -285,11 +285,11 @@ export default function Home() {
           transform: `scale(${1 + currentSection * 0.05})`,
         }}
       >
-        {/* Static image for mobile */}
+        {/* Static image for mobile - positioned right to show rocket */}
         <img
           src="/images/hero.jpg"
           alt=""
-          className="md:hidden absolute inset-0 w-full h-full object-cover"
+          className="md:hidden absolute inset-0 w-full h-full object-cover object-right"
         />
         {/* Video for desktop */}
         <video
@@ -528,31 +528,23 @@ export default function Home() {
 
         {/* Bottom section */}
         <div className="absolute bottom-0 left-0 right-0 md:bottom-6 md:left-8 md:right-8">
-          {/* Mobile: Form fixed at bottom with subtle gradient */}
-          <div className="md:hidden bg-gradient-to-t from-black/80 via-black/50 to-transparent pt-4 pb-3 px-5">
-            <form onSubmit={handleSubmit} className="flex gap-3 items-end">
-              <input
-                type="text"
-                value={formName}
-                onChange={(e) => setFormName(e.target.value)}
-                placeholder={lang === 'es' ? 'NOMBRE' : 'NAME'}
-                className="flex-1 bg-transparent border-b border-white/20 text-white text-sm py-1.5 placeholder:text-white/40 focus:outline-none focus:border-[#e63226] transition-colors"
-                required
-              />
+          {/* Mobile: Simple email form at bottom */}
+          <div className="md:hidden bg-gradient-to-t from-black/90 to-transparent pt-6 pb-4 px-5">
+            <form onSubmit={handleSubmit} className="flex gap-2 items-center">
               <input
                 type="email"
                 value={formEmail}
                 onChange={(e) => setFormEmail(e.target.value)}
-                placeholder="EMAIL"
-                className="flex-1 bg-transparent border-b border-white/20 text-white text-sm py-1.5 placeholder:text-white/40 focus:outline-none focus:border-[#e63226] transition-colors"
+                placeholder={lang === 'es' ? 'TU EMAIL' : 'YOUR EMAIL'}
+                className="flex-1 bg-white/10 text-white text-sm py-3 px-4 rounded placeholder:text-white/50 focus:outline-none focus:ring-1 focus:ring-[#e63226] transition-colors"
                 required
               />
               <button
                 type="submit"
                 disabled={formStatus === 'sending'}
-                className="bg-[#e63226] text-white text-xs uppercase tracking-wider py-2.5 px-5 hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                className="bg-[#e63226] text-white text-xs uppercase tracking-wider py-3 px-6 rounded hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
-                {formStatus === 'sending' ? '...' : formStatus === 'sent' ? '✓' : formStatus === 'error' ? '!' : 'OK'}
+                {formStatus === 'sending' ? '...' : formStatus === 'sent' ? '✓' : formStatus === 'error' ? '!' : (lang === 'es' ? 'Enviar' : 'Send')}
               </button>
             </form>
           </div>
