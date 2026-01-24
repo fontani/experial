@@ -194,6 +194,14 @@ export default function Home() {
     }
   };
   const videoRef = useRef<HTMLVideoElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Reset content scroll position when section changes
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  }, [currentSection]);
 
   // Update video time based on current section
   useEffect(() => {
@@ -239,6 +247,7 @@ export default function Home() {
     }, 300);
   };
 
+  // Desktop scroll navigation
   useEffect(() => {
     let accumulatedDelta = 0;
     const threshold = 100; // Requires more scroll before changing section
@@ -273,6 +282,49 @@ export default function Home() {
     };
   }, [currentSection, isScrolling]);
 
+  // Mobile touch navigation
+  useEffect(() => {
+    let touchStartY = 0;
+    let touchEndY = 0;
+    const minSwipeDistance = 50; // Minimum distance for a swipe
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      touchEndY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = () => {
+      if (isScrolling) return;
+
+      const swipeDistance = touchStartY - touchEndY;
+
+      // Swipe up (next section)
+      if (swipeDistance > minSwipeDistance && currentSection < sections.length - 1) {
+        changeSection(currentSection + 1);
+      }
+      // Swipe down (previous section)
+      else if (swipeDistance < -minSwipeDistance && currentSection > 0) {
+        changeSection(currentSection - 1);
+      }
+
+      touchStartY = 0;
+      touchEndY = 0;
+    };
+
+    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [currentSection, isScrolling]);
+
   const current = sections[currentSection];
 
   return (
@@ -302,10 +354,10 @@ export default function Home() {
         />
       </div>
 
-      {/* Dark overlay - less intense on mobile to show background */}
+      {/* Dark overlay - improved contrast on mobile */}
       <div
         className="md:hidden absolute inset-0 bg-[#0d0d0d] transition-opacity duration-1000"
-        style={{ opacity: 0.25 + currentSection * 0.06 }}
+        style={{ opacity: 0.6 + currentSection * 0.08 }}
       />
       <div
         className="hidden md:block absolute inset-0 bg-[#0d0d0d] transition-opacity duration-1000"
@@ -316,19 +368,19 @@ export default function Home() {
       <div className="relative z-10 h-full w-full">
 
         {/* Top nav */}
-        <nav className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 py-6">
+        <nav className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 md:px-8 py-5 md:py-6">
           {/* Left - Logo */}
           <div className="flex items-center gap-3">
-            <img src="/images/explogo.svg" alt="Experial" className="h-6 w-auto" />
-            <span className="text-white text-sm font-bold tracking-wider">EXPERIAL</span>
+            <img src="/images/explogo.svg" alt="Experial" className="h-7 md:h-6 w-auto" />
+            <span className="text-white text-base md:text-sm font-bold tracking-wider">EXPERIAL</span>
           </div>
 
           {/* Right - Language toggle + Menu button */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-5 md:gap-6">
             {/* Language toggle - shows opposite language */}
             <button
               onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
-              className="text-xs uppercase tracking-[0.2em] text-[#666] hover:text-white transition-colors"
+              className="text-sm md:text-xs uppercase tracking-[0.2em] text-[#666] hover:text-white transition-colors py-2 px-1"
             >
               {lang === 'es' ? 'EN' : 'ES'}
             </button>
@@ -336,12 +388,12 @@ export default function Home() {
             {/* Menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex items-center group"
+              className="flex items-center group p-2 -mr-2"
             >
               <div className="flex flex-col gap-1.5">
-                <span className={`w-6 h-0.5 bg-[#e63226] transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-                <span className={`w-6 h-0.5 bg-[#e63226] transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} />
-                <span className={`w-6 h-0.5 bg-[#e63226] transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+                <span className={`w-7 md:w-6 h-0.5 bg-[#e63226] transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+                <span className={`w-7 md:w-6 h-0.5 bg-[#e63226] transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} />
+                <span className={`w-7 md:w-6 h-0.5 bg-[#e63226] transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
               </div>
             </button>
           </div>
@@ -355,15 +407,15 @@ export default function Home() {
         >
           <button
             onClick={() => setIsMenuOpen(false)}
-            className="absolute top-6 right-8 text-white"
+            className="absolute top-5 md:top-6 right-6 md:right-8 text-white p-2"
           >
-            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-9 md:w-8 h-9 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
-          <div className="h-full flex flex-col justify-center px-16">
-            <nav className="space-y-4">
+          <div className="h-full flex flex-col justify-center px-8 md:px-16">
+            <nav className="space-y-6 md:space-y-4">
               {sections.map((section, i) => (
                 <button
                   key={section.id}
@@ -371,16 +423,16 @@ export default function Home() {
                     changeSection(i);
                     setIsMenuOpen(false);
                   }}
-                  className={`block text-left transition-all duration-300 ${
+                  className={`block text-left transition-all duration-300 py-2 ${
                     i === currentSection
                       ? 'text-[#e63226]'
                       : 'text-white/40 hover:text-white hover:translate-x-4'
                   }`}
                 >
-                  <span className="text-xs text-[#666] uppercase tracking-[0.3em] block mb-1">
+                  <span className="text-xs text-[#666] uppercase tracking-[0.3em] block mb-1.5">
                     0{i + 1}
                   </span>
-                  <span className="text-4xl md:text-6xl font-medium tracking-tight">
+                  <span className="text-3xl md:text-6xl font-medium tracking-tight">
                     {section.label[lang]}
                   </span>
                 </button>
@@ -388,16 +440,16 @@ export default function Home() {
             </nav>
 
             {/* Language in menu */}
-            <div className="mt-16 flex items-center gap-6">
+            <div className="mt-12 md:mt-16 flex items-center gap-6">
               <button
                 onClick={() => setLang('es')}
-                className={`text-sm uppercase tracking-[0.3em] transition-colors ${lang === 'es' ? 'text-[#e63226]' : 'text-white/40 hover:text-white'}`}
+                className={`text-base md:text-sm uppercase tracking-[0.3em] transition-colors py-2 ${lang === 'es' ? 'text-[#e63226]' : 'text-white/40 hover:text-white'}`}
               >
                 Español
               </button>
               <button
                 onClick={() => setLang('en')}
-                className={`text-sm uppercase tracking-[0.3em] transition-colors ${lang === 'en' ? 'text-[#e63226]' : 'text-white/40 hover:text-white'}`}
+                className={`text-base md:text-sm uppercase tracking-[0.3em] transition-colors py-2 ${lang === 'en' ? 'text-[#e63226]' : 'text-white/40 hover:text-white'}`}
               >
                 English
               </button>
@@ -408,39 +460,39 @@ export default function Home() {
         {/* Section label - top left */}
         <div className="absolute top-20 md:top-24 left-5 md:left-8">
           <div className={`transition-all duration-300 ${isAnimating ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            <span className="text-[#e63226] text-xs md:text-xs uppercase tracking-[0.3em]">
+            <span className="text-[#e63226] text-sm md:text-xs uppercase tracking-[0.3em]">
               0{currentSection + 1} — {current.label[lang]}
             </span>
           </div>
         </div>
 
         {/* Main content area */}
-        <div className="absolute top-28 md:top-32 left-5 md:left-8 right-5 md:right-96 bottom-24 md:bottom-40 overflow-y-auto md:overflow-hidden scrollbar-hide">
+        <div ref={contentRef} className="absolute top-32 md:top-32 left-6 md:left-8 right-6 md:right-96 bottom-32 md:bottom-40 overflow-y-auto md:overflow-hidden scrollbar-hide pb-4 md:pb-0">
           {/* Headline with animation */}
           <div className={`transition-all duration-500 ${isAnimating ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-            <h1 className="text-2xl md:text-5xl lg:text-6xl font-medium leading-[1.15] tracking-tight text-white max-w-2xl">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-medium leading-[1.15] tracking-tight text-white max-w-2xl">
               {current.headline[lang]}
             </h1>
           </div>
 
           {/* Content blocks - staggered animation */}
           {current.id !== 'casos' ? (
-            <div className={`mt-5 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 max-w-4xl transition-all duration-500 delay-100 ${
+            <div className={`mt-6 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl transition-all duration-500 delay-100 ${
               isAnimating ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'
             }`}>
               {current.content[lang].map((block, i) => (
                 <div
                   key={i}
-                  className="group p-3.5 md:p-0 bg-black/40 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none border border-white/10 md:border-0 rounded-lg md:rounded-none"
+                  className="group p-4 md:p-0 bg-black/50 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none border border-white/10 md:border-0 rounded-lg md:rounded-none"
                   style={{ transitionDelay: `${150 + i * 100}ms` }}
                 >
                   <div className="flex items-center gap-2 mb-2 md:mb-3">
                     <div className="w-1.5 h-1.5 bg-[#e63226] rounded-full flex-shrink-0" />
-                    <h3 className="text-white text-xs md:text-sm font-medium uppercase tracking-wider">
+                    <h3 className="text-white text-sm md:text-sm font-medium uppercase tracking-wider">
                       {block.title}
                     </h3>
                   </div>
-                  <p className="text-[#aaa] md:text-[#888] text-xs md:text-sm leading-relaxed">
+                  <p className="text-[#ccc] md:text-[#888] text-sm md:text-sm leading-relaxed">
                     {block.description}
                   </p>
                 </div>
@@ -529,20 +581,20 @@ export default function Home() {
         {/* Bottom section */}
         <div className="absolute bottom-0 left-0 right-0 md:bottom-6 md:left-8 md:right-8">
           {/* Mobile: Simple email form at bottom */}
-          <div className="md:hidden bg-gradient-to-t from-black/90 to-transparent pt-6 pb-4 px-5">
-            <form onSubmit={handleSubmit} className="flex gap-2 items-center">
+          <div className="md:hidden bg-gradient-to-t from-black/95 via-black/90 to-transparent pt-8 pb-5 px-5">
+            <form onSubmit={handleSubmit} className="flex gap-3 items-center">
               <input
                 type="email"
                 value={formEmail}
                 onChange={(e) => setFormEmail(e.target.value)}
-                placeholder={lang === 'es' ? 'TU EMAIL' : 'YOUR EMAIL'}
-                className="flex-1 bg-white/10 text-white text-sm py-3 px-4 rounded placeholder:text-white/50 focus:outline-none focus:ring-1 focus:ring-[#e63226] transition-colors"
+                placeholder={lang === 'es' ? 'tu@email.com' : 'your@email.com'}
+                className="flex-1 bg-white/15 text-white text-base py-3.5 px-4 rounded placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#e63226] transition-colors"
                 required
               />
               <button
                 type="submit"
                 disabled={formStatus === 'sending'}
-                className="bg-[#e63226] text-white text-xs uppercase tracking-wider py-3 px-6 rounded hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                className="bg-[#e63226] text-white text-sm uppercase tracking-wider py-3.5 px-7 rounded hover:bg-[#c92a20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 font-medium"
               >
                 {formStatus === 'sending' ? '...' : formStatus === 'sent' ? '✓' : formStatus === 'error' ? '!' : (lang === 'es' ? 'Enviar' : 'Send')}
               </button>
@@ -559,7 +611,7 @@ export default function Home() {
               </div>
               <span className="text-[10px] text-[#333]">|</span>
               <p className="text-[10px] text-[#444] uppercase tracking-wider">
-                © {new Date().getFullYear()} Experial
+                © 2026 Experial
               </p>
             </div>
 
