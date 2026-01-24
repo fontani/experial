@@ -43,7 +43,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
+          command_timeout: 10m
           script: |
             cd /var/www/production/experial
-            npm ci --production
+            npm ci --omit=dev
             pm2 restart experial-production || pm2 start npm --name "experial-production" -- start -- -p 3000
