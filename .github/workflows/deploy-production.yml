@@ -25,30 +25,25 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Install production dependencies
-        run: |
-          rm -rf node_modules
-          npm ci --omit=dev
-
       - name: Deploy to Server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT }}
-          source: ".next/,public/,package.json,node_modules/,next.config.ts"
-          target: "/var/www/production/experial"
-          strip_components: 0
+        run: |
+          echo "${{ secrets.SERVER_SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          rsync -avz --delete -e "ssh -i /tmp/deploy_key -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no" \
+            --exclude 'node_modules' \
+            .next/ public/ package.json package-lock.json next.config.ts \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/production/experial/
+          rm /tmp/deploy_key
 
-      - name: Restart on Server
+      - name: Install dependencies and restart on Server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          command_timeout: 2m
+          command_timeout: 10m
           script: |
             cd /var/www/production/experial
+            npm ci --omit=dev
             pm2 restart experial-production || pm2 start npm --name "experial-production" -- start -- -p 3000
