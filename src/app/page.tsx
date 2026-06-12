@@ -149,13 +149,13 @@ const caseStudies: CaseStudy[] = [
     industry: { es: 'Seguridad', en: 'Security' },
   },
   {
-    name: 'QuienPresta',
-    url: 'quienpresta.com.ar',
+    name: 'Koloco',
+    url: 'koloco.com.ar',
     description: {
-      es: 'Fintech de comparación de préstamos. Optimización de conversión y UX.',
-      en: 'Loan comparison fintech. Conversion and UX optimization.'
+      es: 'Sello discográfico independiente. Identidad digital y plataforma para sus artistas.',
+      en: 'Independent record label. Digital identity and platform for its artists.'
     },
-    industry: { es: 'Fintech', en: 'Fintech' },
+    industry: { es: 'Música', en: 'Music' },
   },
 ];
 
